@@ -19,6 +19,10 @@ public class PlayerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private static int TYPE_HEADER = 0;
     private static int TYPE_PLAYER = 1;
 
+
+    private boolean settingState = false;
+
+
     public PlayerAdapter(List<PlayerOverviewItem> playerList, PlayerItemClickListener listener) {
         this.playerItemList = playerList;
         this.listener = listener;
@@ -33,33 +37,37 @@ public class PlayerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return new HeaderViewHolder(itemView);
         }
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.player_item, parent, false);
-        final PlayerViewHolder viewholder = new PlayerViewHolder(itemView);
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onItemClick(v, viewholder.getPosition());
-            }
-        });
-        viewholder.checked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                listener.onCheckedChange(viewholder.getPosition(), isChecked);
-            }
-        });
-        return viewholder;
+
+        return new PlayerViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (playerItemList.get(position).getItem() instanceof Header) {
             ((HeaderViewHolder) holder).title.setText(((Header) playerItemList.get(position).getItem()).getHeaderTitle());
 
         } else {
             Player player = (Player) playerItemList.get(position).getItem();
-            ((PlayerViewHolder) holder).name.setText(player.getName());
-            ((PlayerViewHolder) holder).age.setText(player.getAge());
-            ((PlayerViewHolder) holder).club.setText(player.getClub());
-            ((PlayerViewHolder) holder).checked.setChecked(player.isChecked());
+            PlayerViewHolder vh = ((PlayerViewHolder) holder);
+            vh.name.setText(player.getName());
+            vh.age.setText(player.getAge());
+            vh.club.setText(player.getClub());
+            settingState = true;
+            vh.checked.setChecked(player.isChecked());
+            settingState = false;
+            vh.container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(v, position);
+                }
+            });
+            vh.checked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(settingState) return;
+                    listener.onCheckedChange(position, isChecked);
+                }
+            });
         }
     }
 

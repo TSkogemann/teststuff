@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -16,6 +17,7 @@ public class PlayerViewHolder extends RecyclerView.ViewHolder {
     public TextView age;
     public TextView club;
     public CheckBox checked;
+    public LinearLayout container;
 
 
 
@@ -25,6 +27,7 @@ public class PlayerViewHolder extends RecyclerView.ViewHolder {
         age = itemView.findViewById(R.id.age);
         club = itemView.findViewById(R.id.club);
         checked = itemView.findViewById(R.id.checkbox);
+        container = itemView.findViewById(R.id.player_container_ll);
     }
 
 
